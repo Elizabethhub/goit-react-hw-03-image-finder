@@ -1,41 +1,71 @@
 import React, { Component } from "react";
-import { getImages } from "../../services/Api";
 import ImageGallery from "../imageGallery/ImageGallery";
+import Searchbar from "../searchbar/Searchbar";
+import Button from "../button/Button";
+import AppLoader from "../loader/Loader";
+import Modal from "../modal/Modal";
+import { getImages } from "../../services/Api";
 
 class Main extends Component {
   state = {
     images: [],
     page: 1,
-    query: "cat",
+    query: "sea",
+    largeImage: "",
+    isLoading: false,
+    showModal: false,
   };
 
-  //   componentDidUpdate(prevProps, prevState) {
-  //     if (prevState.query !== this.state.query) {
-  //       this.getImages();
+  // componentDidUpdate(prevProps, prevState) {
+  //     if (prevState.images !== this.state.images) {
+
   //     }
-  //   }
+  // }
+
+  findImage = async (query) => {
+    const images = await getImages(query);
+
+    this.setState({ query: query, images: images.hits, page: 2 });
+  };
 
   addLargeImg = (largeImgUrl) => {
-    this.setState({ largeImage: largeImgUrl });
+    console.log(`largeImgUrl`, largeImgUrl);
+    this.setState({ largeImage: largeImgUrl, showModal: true });
   };
-  //  const find = () => {
-  //     getImages(state.query).then((data) => {
-  //       state.images = [...data];
-  //       state.page = 2;
-  //     });
-  //   };
 
-  //   const loadMore = () => {
-  //     getImages(state.query, state.page).then((data) => {
-  //       state.images = [...state.images, ...data];
-  //       state.page += 1;
-  //     });
-  //   };
+  loadMore = () => {
+    this.setState({ isLoading: true });
+    console.log(`load`, "load");
+    getImages(this.state.query, this.state.page)
+      .then((images) => {
+        this.setState((prev) => ({ images: [...prev.images, ...images.hits], page: prev.page + 1 }));
+      })
+      .catch((error) => console.log(`error`, error))
+      .finally(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
+        this.setState({ isLoading: false });
+      });
+  };
+
+  toggleModal = (url) => {
+    if (!url) {
+      url = null;
+    }
+    this.setState({ showModal: !this.state.showModal, largeImageURL: url });
+  };
 
   render() {
+    const { showModal, images, isLoading, largeImage } = this.state;
     return (
       <>
+        <Searchbar onSubmit={this.findImage} />
+        {showModal && <Modal onClose={this.toggleModal} url={largeImage} />}
         <ImageGallery images={this.state.images} addLargeImg={this.addLargeImg} />
+        {!!images.length && !isLoading && <Button loadMore={this.loadMore} />}
+        {isLoading && <AppLoader />}
       </>
     );
   }

@@ -6,7 +6,7 @@ export const getImages = async (query, page = 1) => {
   try {
     const response = await axios.get(
       axios.defaults.baseURL +
-        `?q=${query}&page=${page}&key=22384514-a4280542ebcdb73106bba1593&image_type=photo&orientation=horizontal&per_page=12`
+        `?q=${query}&page=${page}&key=${process.env.REACT_APP_API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
     );
     return response.data;
   } catch (error) {
