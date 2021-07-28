@@ -5,6 +5,7 @@ import Button from "../button/Button";
 import AppLoader from "../loader/Loader";
 import Modal from "../modal/Modal";
 import { getImages } from "../../services/Api";
+import { MainStyled } from "./MainStyled";
 
 class Main extends Component {
   state = {
@@ -60,13 +61,13 @@ class Main extends Component {
   render() {
     const { showModal, images, isLoading, largeImage } = this.state;
     return (
-      <>
+      <MainStyled className="Main">
         <Searchbar onSubmit={this.findImage} />
         {showModal && <Modal onClose={this.toggleModal} url={largeImage} />}
         <ImageGallery images={this.state.images} addLargeImg={this.addLargeImg} />
         {!!images.length && !isLoading && <Button loadMore={this.loadMore} />}
         {isLoading && <AppLoader />}
-      </>
+      </MainStyled>
     );
   }
 }

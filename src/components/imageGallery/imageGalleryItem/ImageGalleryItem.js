@@ -1,8 +1,9 @@
 import React from "react";
+import { ImageGalleryItemStyled } from "./ImageGalleryItemStyled";
 
 const ImageGalleryItem = ({ id, tags, webformatURL, largeImageURL, addLargeImg }) => {
   return (
-    <li className="ImageGalleryItem" key={id}>
+    <ImageGalleryItemStyled className="ImageGalleryItem" key={id}>
       <img
         src={webformatURL}
         id={id}
@@ -10,7 +11,7 @@ const ImageGalleryItem = ({ id, tags, webformatURL, largeImageURL, addLargeImg }
         className="ImageGalleryItem-image"
         onClick={() => addLargeImg(largeImageURL)}
       />
-    </li>
+    </ImageGalleryItemStyled>
   );
 };
 
