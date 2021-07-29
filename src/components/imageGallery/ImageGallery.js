@@ -4,7 +4,7 @@ import { ImageGalleryStyled } from "./imageGalleryStyled";
 
 const ImageGallery = ({ images, addLargeImg }) => {
   return (
-    <ImageGalleryStyled className="ImageGallery">
+    <ImageGalleryStyled>
       {images.map((image) => (
         <ImageGalleryItem key={image.id} {...image} addLargeImg={addLargeImg} />
       ))}

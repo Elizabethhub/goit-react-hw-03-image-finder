@@ -17,45 +17,60 @@ class Main extends Component {
     showModal: false,
   };
 
-  // componentDidUpdate(prevProps, prevState) {
-  //     if (prevState.images !== this.state.images) {
+  fetchImages = (query, page) => {
+    this.setState({ isLoading: true });
+    getImages(query, page).then((images) => {
+      this.setState((prev) => ({ images: !page ? images : [...prev.images, ...images], isLoading: false }));
+    });
+  };
 
-  //     }
-  // }
-
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.query !== prevState.query) {
+      this.fetchImages(this.state.query);
+    }
+    if (this.state.page !== prevState.page) {
+      this.fetchImages(this.state.query, this.state.page);
+    }
+    if (this.state.images !== prevState.images) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }
+  loadMore = async () => {
+    this.setState((prev) => ({ page: prev.page + 1 }));
+  };
   findImage = async (query) => {
-    const images = await getImages(query);
-
-    this.setState({ query: query, images: images.hits, page: 2 });
+    this.setState({ query, page: 1 });
   };
 
   addLargeImg = (largeImgUrl) => {
-    console.log(`largeImgUrl`, largeImgUrl);
     this.setState({ largeImage: largeImgUrl, showModal: true });
   };
 
-  loadMore = () => {
-    this.setState({ isLoading: true });
-    console.log(`load`, "load");
-    getImages(this.state.query, this.state.page)
-      .then((images) => {
-        this.setState((prev) => ({ images: [...prev.images, ...images.hits], page: prev.page + 1 }));
-      })
-      .catch((error) => console.log(`error`, error))
-      .finally(() => {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: "smooth",
-        });
-        this.setState({ isLoading: false });
-      });
-  };
+  // loadMore = () => {
+  // this.setState({ isLoading: true });
+  //   console.log(`load`, "load");
+  //   getImages(this.state.query, this.state.page)
+  //     .then((images) => {
+  //       this.setState((prev) => ({ images: [...prev.images, ...images.hits], page: prev.page + 1 }));
+  //     })
+  //     .catch((error) => console.log(`error`, error))
+  //     .finally(() => {
+  //       window.scrollTo({
+  //         top: document.documentElement.scrollHeight,
+  //         behavior: "smooth",
+  //       });
+  //       this.setState({ isLoading: false });
+  //     });
+  // };
 
   toggleModal = (url) => {
     if (!url) {
       url = null;
     }
-    this.setState({ showModal: !this.state.showModal, largeImageURL: url });
+    this.setState({ showModal: !this.state.showModal, largeImage: "" });
   };
 
   render() {
